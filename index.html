@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Urbanist:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS -->
+    <link href="/src/css/styles.css" rel="stylesheet" />
+
+    <title>Payment Card</title>
+  </head>
+
+  <body class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div class="bg-white shadow-lg rounded-xl max-w-sm w-full">
+      <!-- Header -->
+      <div
+        class="flex items-center justify-between border-b border-b-gray-200 mb-4"
+      >
+        <div class="p-4 flex justify-between items-center w-full">
+          <div class="flex items-end">
+            <div class="border border-gray-200 w-fit rounded-md">
+              <img src="./src/assets/plogo.svg" alt="Logo" class="w-12 h-12" />
+            </div>
+            <div class="ml-3">
+              <div class="text-lg font-bold">PaySwitch Merchant</div>
+              <div
+                class="text-white text-[10px] p-1 w-fit rounded-md bg-blue-500 flex items-center"
+              >
+                <img
+                  class="w-4 h-4 mr-1"
+                  src="./src/assets/check.svg"
+                  alt="Check Icon"
+                />
+                Verified by PaySwitch
+              </div>
+            </div>
+          </div>
+          <button onclick="" class="text-red-600 text-sm font-[500]">
+            Close
+          </button>
+        </div>
+      </div>
+
+      <!-- Segmented Control -->
+      <div class="flex items-center justify-between">
+        <div class="px-4 flex justify-between items-center w-full">
+          <div
+            class="inline-flex h-9 w-full items-baseline justify-start rounded-lg bg-gray-100 p-1"
+          >
+            <button
+              type="button"
+              aria-disabled="false"
+              data-target="mobile-form"
+              class="group inline-flex items-center justify-center whitespace-nowrap py-2 align-middle font-semibold transition-all duration-300 ease-in-out disabled:cursor-not-allowed stroke-blue-700 min-w-[32px] gap-1.5 text-xs disabled:stroke-slate-400 disabled:text-slate-400 hover:stroke-blue-950 hover:text-blue-950 h-7 text-slate-950 w-full rounded-md bg-white px-3 drop-shadow"
+            >
+              <img src="./src/assets/mobile.svg" alt="Visa" class="w-4 h-4" />
+              <div>Pay with Mobile Money</div>
+            </button>
+
+            <button
+              type="button"
+              aria-disabled="false"
+              data-target="card-form"
+              class="group inline-flex items-center justify-center whitespace-nowrap rounded-lg py-2 align-middle font-semibold transition-all duration-300 ease-in-out disabled:cursor-not-allowed stroke-blue-700 min-w-[32px] gap-1.5 text-xs disabled:stroke-slate-400 disabled:text-slate-400 hover:stroke-blue-950 hover:text-blue-950 h-7 w-full bg-transparent px-3 text-slate-600"
+            >
+              <img src="./src/assets/card.svg" alt="Visa" class="w-4 h-4" />
+              <div>Pay with Card</div>
+            </button>
+          </div>
+
+          <!-- Required JavaScript -->
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              const inactiveTabClassName = "bg-transparent";
+              const activeTabClassName = "rounded-md bg-white shadow";
+
+              const buttons = document.querySelectorAll("button[data-target]");
+              const forms = document.querySelectorAll(".form-section");
+
+              buttons.forEach((button) => {
+                button.addEventListener("click", function () {
+                  // Remove active styles from all buttons
+                  buttons.forEach((b) => {
+                    b.classList.remove(...activeTabClassName.split(/\s+/));
+                    b.classList.add(...inactiveTabClassName.split(/\s+/));
+                  });
+
+                  // Set the selected button as active
+                  button.classList.add(...activeTabClassName.split(/\s+/));
+                  button.classList.remove(...inactiveTabClassName.split(/\s+/));
+
+                  // Hide all forms
+                  forms.forEach((form) => {
+                    form.classList.add("hidden");
+                  });
+
+                  // Show the selected form
+                  const targetForm = document.getElementById(
+                    button.getAttribute("data-target")
+                  );
+                  if (targetForm) {
+                    targetForm.classList.remove("hidden");
+                  }
+                });
+              });
+
+              // Show the mobile form by default
+              document.getElementById("mobile-form").classList.remove("hidden");
+              buttons[0].classList.add(...activeTabClassName.split(/\s+/));
+            });
+
+            function toggleDropdown() {
+              const dropdownMenu = document.getElementById("dropdownMenu");
+              dropdownMenu.classList.toggle("hidden");
+            }
+
+            function selectOption(text, icon) {
+              const selectedText = document.getElementById("selectedText");
+              const selectedIcon = document.getElementById("selectedIcon");
+              selectedText.textContent = text;
+              selectedIcon.src = icon;
+              toggleDropdown();
+            }
+          </script>
+        </div>
+      </div>
+
+      <div
+        class="text-[#1E1E1E] text-xs justify-center items-center text-center p-4"
+      >
+        Complete your purchase by providing your payment details.
+      </div>
+
+      <!-- Mobile Form -->
+      <div class="w-full px-4" id="mobile-form">
+        <label
+          for="phone"
+          class="form-section block text-xs font-[600] mb-1 text-[#616478]"
+          >Mobile Network</label
+        >
+        <div class="relative w-full mb-5">
+          <!-- Selected option display -->
+          <div
+            class="w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm flex items-center justify-between focus:ring-blue-500 focus:outline-none"
+            onclick="toggleDropdown()"
+            id="dropdownSelected"
+          >
+            <div id="selectedText">-- Select a mobile network --</div>
+            <img
+              id="selectedIcon"
+              src="./src/assets/arrowdown.svg"
+              alt=""
+              class="w-4 h-4 hidden"
+            />
+            <img
+              src="./src/assets/arrowdown.svg"
+              alt="Dropdown Arrow"
+              class="w-4 h-4"
+            />
+          </div>
+
+          <!-- Dropdown menu options -->
+          <div
+            class="absolute top-full left-0 w-full bg-white border border-gray-300 rounded shadow-md z-10 hidden"
+            id="dropdownMenu"
+          >
+            <div
+              class="flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100"
+              onclick="selectOption('MTN', 'momo.svg')"
+            >
+              <img src="./src/assets/momo.svg" alt="MTN" class="w-5 h-5 mr-2" />
+              <span>MTN</span>
+            </div>
+            <div
+              class="flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100"
+              onclick="selectOption('Telecel', 'telecel.svg')"
+            >
+              <img
+                src="./src/assets/telecel.svg"
+                alt="Telecel"
+                class="w-5 h-5 mr-2"
+              />
+              <span>Telecel (Formally Vodafone)</span>
+            </div>
+            <div
+              class="flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100"
+              onclick="selectOption('AirtelTigo', 'at.svg')"
+            >
+              <img
+                src="./src/assets/at.svg"
+                alt="AirtelTigo"
+                class="w-5 h-5 mr-2"
+              />
+              <span>AirtelTigo</span>
+            </div>
+            <div
+              class="flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100"
+              onclick="selectOption('G-Money', 'gmoney.svg')"
+            >
+              <img
+                src="./src/assets/gmoney.svg"
+                alt="G-Money"
+                class="w-5 h-5 mr-2"
+              />
+              <span>G-Money</span>
+            </div>
+            <div
+              class="flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100"
+              onclick="selectOption('Zeepay', 'zeepay.svg')"
+            >
+              <img
+                src="./src/assets/zeepay.svg"
+                alt="Zeepay"
+                class="w-5 h-5 mr-2"
+              />
+              <span>Zeepay</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="mobile-form" class="form-section px-4 pb-3 gap-2 flex flex-col">
+        <div>
+          <label
+            for="phone"
+            class="block text-xs font-[600] mb-1 text-[#616478]"
+            >Phone Number</label
+          >
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="E.g 021 123 3456"
+            class="w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <!-- Card Form -->
+      <div
+        id="card-form"
+        class="form-section hidden px-4 pb-3 gap-2 flex flex-col"
+      >
+        <div>
+          <label
+            for="card-name"
+            class="block text-xs font-[600] mb-1 text-[#616478]"
+            >Card name</label
+          >
+          <input
+            type="text"
+            id="card-name"
+            name="card-name"
+            placeholder="E.g John Doe"
+            class="w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label
+            for="card-number"
+            class="block text-xs font-[600] mb-1 text-[#616478]"
+            >Card Number</label
+          >
+          <input
+            type="tel"
+            id="card-number"
+            name="card-number"
+            placeholder="0000 0000 0000 0000"
+            class="w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+        <div class="flex">
+          <div class="gap-2 flex flex-col">
+            <label
+              for="expiry"
+              class="block text-xs font-[600] mb-1 text-[#616478]"
+              >Expiry</label
+            >
+            <input
+              type="tel"
+              id="expiry"
+              name="expiry"
+              placeholder="mm/yy"
+              class="w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+          <div class="pl-4 gap-2 flex flex-col">
+            <label
+              for="cvv"
+              class="block text-xs font-[600] mb-1 text-[#616478]"
+              >CVV</label
+            >
+            <input
+              type="tel"
+              id="cvv"
+              name="cvv"
+              placeholder="000"
+              class="w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Button -->
+      <div class="p-4">
+        <button
+          type="submit"
+          class="w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700"
+        >
+          Pay Amount
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex flex-col">
+        <div class="flex items-center justify-center w-full gap-2 text-xs">
+          <div>Supported Wallets:</div>
+          <div class="flex gap-1">
+            <img src="./src/assets/momo.svg" alt="Wallet 1" />
+            <img src="./src/assets/telecel.svg" alt="Wallet 2" />
+            <img src="./src/assets/at.svg" alt="Wallet 3" />
+            <img src="./src/assets/zeepay.svg" alt="Wallet 4" />
+            <img src="./src/assets/gmoney.svg" alt="Wallet 5" />
+          </div>
+        </div>
+        <div
+          class="text-[10px] text-[#222357] flex gap-1 justify-center items-center mb-4 mt-2"
+        >
+          <img src="./src/assets/lock.svg" alt="Wallet 5" />
+          <div>Secured by theTeller</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
