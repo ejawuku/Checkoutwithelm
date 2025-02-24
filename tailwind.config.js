@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        Urbanist: ["Urbanist", "urbanist"],
+        Urbanist: ["Urbanist", "sans-serif"],
       },
     },
   },
