@@ -5451,7 +5451,7 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('flex flex-col items-center justify-between')
+								$elm$html$Html$Attributes$class('flex flex-col items-center justify-between ')
 							]),
 						_List_fromArray(
 							[
@@ -5524,7 +5524,7 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('text-center text-xs px-4 text-gray-600 py-4')
+								$elm$html$Html$Attributes$class('text-center  text-xs px-4 text-gray-600 py-4')
 							]),
 						_List_fromArray(
 							[
@@ -5534,7 +5534,7 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('w-full px-4 pt-4')
+								$elm$html$Html$Attributes$class('w-full px-4 pt-4 ')
 							]),
 						_List_fromArray(
 							[
@@ -5732,7 +5732,7 @@ var $author$project$Main$view = function (model) {
 														$elm$html$Html$Attributes$type_('tel'),
 														$elm$html$Html$Attributes$id('phone'),
 														$elm$html$Html$Attributes$placeholder('E.g 021 123 3456'),
-														$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-xs focus:ring-blue-500 focus:outline-none'),
+														$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
 														$elm$html$Html$Events$onInput($author$project$Main$UpdatePhone)
 													]),
 												_List_Nil)
@@ -5743,7 +5743,7 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('form-section px-4 pt-4 pb-3 gap-4 flex flex-col')
+								$elm$html$Html$Attributes$class('form-section px-4 pt-4 pb-3 gap-4 flex flex-col ')
 							]),
 						_List_fromArray(
 							[
@@ -5770,7 +5770,7 @@ var $author$project$Main$view = function (model) {
 												$elm$html$Html$Attributes$type_('text'),
 												$elm$html$Html$Attributes$id('card-name'),
 												$elm$html$Html$Attributes$placeholder('E.g John Doe'),
-												$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-xs focus:ring-blue-500 focus:outline-none'),
+												$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
 												$elm$html$Html$Events$onInput($author$project$Main$UpdateCardName)
 											]),
 										_List_Nil)
@@ -5798,7 +5798,7 @@ var $author$project$Main$view = function (model) {
 												$elm$html$Html$Attributes$type_('tel'),
 												$elm$html$Html$Attributes$id('card-number'),
 												$elm$html$Html$Attributes$placeholder('0000 0000 0000 0000'),
-												$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-xs focus:ring-blue-500 focus:outline-none'),
+												$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
 												$elm$html$Html$Events$onInput($author$project$Main$UpdateCardNumber)
 											]),
 										_List_Nil)
@@ -5837,7 +5837,7 @@ var $author$project$Main$view = function (model) {
 														$elm$html$Html$Attributes$type_('tel'),
 														$elm$html$Html$Attributes$id('expiry'),
 														$elm$html$Html$Attributes$placeholder('mm/yy'),
-														$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-xs focus:ring-blue-500 focus:outline-none'),
+														$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
 														$elm$html$Html$Events$onInput($author$project$Main$UpdateExpiry)
 													]),
 												_List_Nil)
@@ -5868,7 +5868,7 @@ var $author$project$Main$view = function (model) {
 														$elm$html$Html$Attributes$type_('tel'),
 														$elm$html$Html$Attributes$id('cvv'),
 														$elm$html$Html$Attributes$placeholder('000'),
-														$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-xs focus:ring-blue-500 focus:outline-none'),
+														$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
 														$elm$html$Html$Events$onInput($author$project$Main$UpdateCVV)
 													]),
 												_List_Nil)
@@ -5879,7 +5879,7 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('p-4')
+								$elm$html$Html$Attributes$class('p-4 hidden')
 							]),
 						_List_fromArray(
 							[
@@ -5899,6 +5899,431 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
+								$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center hidden justify-center w-full')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$img,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$src('./src/assets/contactless-payment.gif'),
+										$elm$html$Html$Attributes$alt('Wallet 1'),
+										$elm$html$Html$Attributes$class('w-20 h-20')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center text-md font-[700]')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Complete on Mobile'),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('text-sm font-[600] text-center')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Enter your mobile PIN to complete')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('your payment of GHS20.00')
+													]))
+											]))
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('flex flex-col gap-3 items-center justify-center w-full px-4')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('w-full')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$button,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('submit'),
+														$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Pay Amount')
+													]))
+											])),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('w-full')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$button,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('submit'),
+														$elm$html$Html$Attributes$class('w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Cancel Payment')
+													]))
+											]))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center hidden justify-center w-full')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$img,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$src('./src/assets/question.gif'),
+										$elm$html$Html$Attributes$alt('Wallet 1'),
+										$elm$html$Html$Attributes$class('w-20 h-20')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center text-md font-[700]')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Didn\'t get a prompt?'),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('text-sm font-[600] text-center')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('To complete this transaction')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('pt-5')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text(' ')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('1. Dial *110# and')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('2. Go to option 4 ‘Make  payment’')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('3. Now go to option 8 ‘My Approvals’')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('pt-5')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text(' ')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Follow the necessary steps then come back')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('to complete payment.')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('pt-5')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text(' ')
+													]))
+											]))
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('flex flex-col gap-3 items-center justify-center w-full px-4')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('w-full')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$button,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('submit'),
+														$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Confirm Payment')
+													]))
+											])),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('w-full')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$button,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('submit'),
+														$elm$html$Html$Attributes$class('w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Cancel Payment')
+													]))
+											]))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center hidden justify-center w-full')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$img,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$src('./src/assets/alarm.gif'),
+										$elm$html$Html$Attributes$alt('Wallet 1'),
+										$elm$html$Html$Attributes$class('w-20 h-20')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('text-sm font-[600] text-center')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Transaction timed out, please try another')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('option')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('pt-5')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text(' ')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('pt-5')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text(' ')
+													]))
+											]))
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('flex flex-col gap-3 items-center justify-center w-full px-4')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('w-full')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$button,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('submit'),
+														$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Try again')
+													]))
+											])),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('w-full flex flex-col gap-3')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$button,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('submit'),
+														$elm$html$Html$Attributes$class('w-full h-11 py-2  bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Use a different number')
+													]))
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$type_('submit'),
+												$elm$html$Html$Attributes$class('w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Use card instead')
+											]))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 hidden items-center justify-center w-full')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$img,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$src('./src/assets/verified.gif'),
+										$elm$html$Html$Attributes$alt('Wallet 1'),
+										$elm$html$Html$Attributes$class('w-20 h-20')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('text-md font-[700] text-center')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Payment Made Successfully')
+											]))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
 								$elm$html$Html$Attributes$class('flex flex-col')
 							]),
 						_List_fromArray(
@@ -5907,7 +6332,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('flex items-center justify-center w-full gap-2 text-xs')
+										$elm$html$Html$Attributes$class('flex items-center  justify-center w-full gap-2 text-xs')
 									]),
 								_List_fromArray(
 									[

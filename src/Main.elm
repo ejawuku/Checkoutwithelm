@@ -103,7 +103,7 @@ view model =
                 ]
 
               -- Segmented Control
-            , div [ class "flex flex-col items-center justify-between" ]
+            , div [ class "flex flex-col items-center justify-between " ]
                 [ div [ class "px-4 flex justify-between items-center w-full" ]
                   [ div [ class "inline-flex h-9 w-full items-baseline justify-start rounded-lg bg-gray-100 p-1" ]
                     [ button
@@ -125,12 +125,12 @@ view model =
                 ]
 
            
-            , div [ class "text-center text-xs px-4 text-gray-600 py-4" ]
+            , div [ class "text-center  text-xs px-4 text-gray-600 py-4" ]
               [ text "Complete your purchase by providing your payment details." ]
 
               -- Mobile Form
             , if model.activeForm == "mobile-form" then
-                div [ class "w-full px-4 pt-4" ]
+                div [ class "w-full px-4 pt-4 " ]
                     [ label [ for "phone", class "block text-xs font-[600] mb-1 text-[#616478]" ] [ text "Mobile Network" ]
                     , div [ class "relative w-full mb-5" ]
                         [ div
@@ -187,7 +187,7 @@ view model =
 
               -- Card Form
             , if model.activeForm == "card-form" then
-                div [ class "form-section px-4 pt-4 pb-3 gap-4 flex flex-col" ]
+                div [ class "form-section px-4 pt-4 pb-3 gap-4 flex flex-col " ]
                     [ div []
                         [ label [ for "card-name", class "block text-xs font-[600] mb-1 text-[#616478]" ] [ text "Card name" ]
                         , input
@@ -240,7 +240,7 @@ view model =
                 text ""
 
               -- Button
-            , div [ class "p-4" ]
+            , div [ class "p-4 hidden" ]
                 [ button
                     [ type_ "submit"
                     , class "w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700"
@@ -254,10 +254,163 @@ view model =
 
 
               --Confirming Payment
-            , div[ class "flex flex-col gap-2"][
-                img [ src "./src/assets/contactless-payment.gif", alt "Wallet 1" ] []
+          ,div [ class "flex flex-col pt-5 gap-5 items-center hidden justify-center w-full" ] [
+                img [ src "./src/assets/contactless-payment.gif", alt "Wallet 1", class "w-20 h-20" ] []
 
+                , div [ class "flex flex-col gap-2 items-center justify-center text-md font-[700]" ] [
+                    text "Complete on Mobile"
+                ,div [ class "text-sm font-[600] text-center" ] [
+                    div [] [ text "Enter your mobile PIN to complete" ]
+                 , div [] [ text "your payment of GHS20.00" ]
             ]
+        ]
+
+        , div [ class "flex flex-col gap-3 items-center justify-center w-full px-4" ] [
+            div [ class "w-full" ] [
+                button
+                    [ type_ "submit"
+                        , class "w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700"
+                    ]
+                    [ text "Pay Amount" ]
+            ]
+
+        , div [ class "w-full" ] [
+            button
+                [ type_ "submit"
+                , class "w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200"
+                ]
+                [ text "Cancel Payment" ]
+            ]
+        ]
+
+
+        ]
+
+
+
+
+
+
+
+
+
+            --Didn't get prompt message section
+
+            ,div [ class "flex flex-col pt-5 gap-5 items-center hidden justify-center w-full" ] [
+                img [ src "./src/assets/question.gif", alt "Wallet 1", class "w-20 h-20" ] []
+
+                , div [ class "flex flex-col gap-2 items-center justify-center text-md font-[700]" ] [
+                    text "Didn't get a prompt?"
+                ,div [ class "text-sm font-[600] text-center" ] [
+                    div [] [ text "To complete this transaction" ]
+                    ,div [class "pt-5"] [text " "]
+            
+                    , div [] [ text "1. Dial *110# and" ]
+                     , div [] [ text "2. Go to option 4 ‘Make  payment’" ]
+                      , div [] [ text "3. Now go to option 8 ‘My Approvals’" ]
+                       , div [class "pt-5"] [ text " " ]
+                       
+                        , div [] [ text "Follow the necessary steps then come back" ]
+                        , div [] [ text "to complete payment." ]
+                        , div [class "pt-5"] [ text " " ]
+            ]
+        ]
+
+        , div [ class "flex flex-col gap-3 items-center justify-center w-full px-4" ] [
+            div [ class "w-full" ] [
+                button
+                    [ type_ "submit"
+                        , class "w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700"
+                    ]
+                    [ text "Confirm Payment" ]
+            ]
+
+        , div [ class "w-full" ] [
+            button
+                [ type_ "submit"
+                , class "w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200"
+                ]
+                [ text "Cancel Payment" ]
+            ]
+        ]
+
+
+        ]
+
+
+
+
+        --Transaction time out section
+
+        
+            ,div [ class "flex flex-col pt-5 gap-5 items-center hidden justify-center w-full" ] [
+                img [ src "./src/assets/alarm.gif", alt "Wallet 1", class "w-20 h-20" ] []
+
+                , div [ class "flex flex-col gap-2 items-center justify-center" ] [
+                   
+                div [ class "text-sm font-[600] text-center" ] [
+                    div [] [ text "Transaction timed out, please try another" ]
+                    ,div [] [ text "option" ]
+                    ,div [class "pt-5"] [text " "]
+                        , div [class "pt-5"] [ text " " ]
+            ]
+        ]
+
+        , div [ class "flex flex-col gap-3 items-center justify-center w-full px-4" ] [
+            div [ class "w-full" ] [
+                button
+                    [ type_ "submit"
+                        , class "w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700"
+                    ]
+                    [ text "Try again" ]
+            ]
+
+        , div [ class "w-full flex flex-col gap-3" ] [
+            button
+                [ type_ "submit"
+                , class "w-full h-11 py-2  bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200"
+                ]
+                [ text "Use a different number" ]
+            ]
+            , button
+                [ type_ "submit"
+                , class "w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200"
+                ]
+                [ text "Use card instead" ]
+            ]
+            ]
+            
+            
+       
+        
+        
+        
+        --Payment Successful Section
+
+        ,div [ class "flex flex-col pt-5 gap-5 hidden items-center justify-center w-full" ] [
+                img [ src "./src/assets/verified.gif", alt "Wallet 1", class "w-20 h-20" ] []
+
+                , div [ class "flex flex-col gap-2 items-center justify-center" ] [
+                   
+              
+                    div [class "text-md font-[700] text-center"] [ text "Payment Made Successfully" ]
+                   
+            
+        ]
+
+       
+       
+            ]
+
+
+        
+
+
+
+
+           
+           
+
 
 
 
@@ -267,7 +420,7 @@ view model =
 
               -- Footer
             , div [ class "flex flex-col" ]
-                [ div [ class "flex items-center justify-center w-full gap-2 text-xs" ]
+                [ div [ class "flex items-center  justify-center w-full gap-2 text-xs" ]
                     [ text "Supported Wallets:"
                     ,if model.activeForm == "card-form" then
                         div [ class "flex gap-1" ]
