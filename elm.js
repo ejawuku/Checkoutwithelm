@@ -5159,11 +5159,12 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
+var $author$project$Main$NotStarted = {$: 'NotStarted'};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		{activeForm: 'mobile-form', cardName: '', cardNumber: '', cvv: '', expiry: '', isDropdownOpen: false, phone: '', selectedIcon: '', selectedNetwork: '-- Select a mobile network --'},
+		{activeForm: 'mobile-form', cardName: '', cardNumber: '', cvv: '', expiry: '', isDropdownOpen: false, paymentStatus: $author$project$Main$NotStarted, phone: '', selectedIcon: '', selectedNetwork: '-- Select a mobile network --'},
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$ToggleDropdown = {$: 'ToggleDropdown'};
@@ -5175,7 +5176,15 @@ var $author$project$Main$subscriptions = function (_v0) {
 			return $author$project$Main$ToggleDropdown;
 		});
 };
+var $author$project$Main$ConfirmingPayment = {$: 'ConfirmingPayment'};
+var $author$project$Main$PaymentSuccessful = {$: 'PaymentSuccessful'};
+var $author$project$Main$PaymentTimedOut = {$: 'PaymentTimedOut'};
+var $author$project$Main$PleaseWait = {$: 'PleaseWait'};
+var $author$project$Main$ShowPromptSection = {$: 'ShowPromptSection'};
+var $author$project$Main$ShowSuccessSection = {$: 'ShowSuccessSection'};
+var $author$project$Main$WaitingForPrompt = {$: 'WaitingForPrompt'};
 var $elm$core$Basics$not = _Basics_not;
+var $elm$core$Process$sleep = _Process_sleep;
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -5228,19 +5237,73 @@ var $author$project$Main$update = F2(
 						model,
 						{expiry: expiry}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'UpdateCVV':
 				var cvv = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{cvv: cvv}),
 					$elm$core$Platform$Cmd$none);
+			case 'StartPayment':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{paymentStatus: $author$project$Main$ConfirmingPayment}),
+					A2(
+						$elm$core$Task$perform,
+						function (_v1) {
+							return $author$project$Main$ShowPromptSection;
+						},
+						$elm$core$Process$sleep((2 * 60) * 1000)));
+			case 'PaymentConfirmed':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{paymentStatus: $author$project$Main$PleaseWait}),
+					A2(
+						$elm$core$Task$perform,
+						function (_v2) {
+							return $author$project$Main$ShowSuccessSection;
+						},
+						$elm$core$Process$sleep(5000)));
+			case 'PaymentFailed':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{paymentStatus: $author$project$Main$PaymentTimedOut}),
+					$elm$core$Platform$Cmd$none);
+			case 'ShowPromptSection':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{paymentStatus: $author$project$Main$WaitingForPrompt}),
+					$elm$core$Platform$Cmd$none);
+			case 'ShowPleaseWaitSection':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{paymentStatus: $author$project$Main$PleaseWait}),
+					$elm$core$Platform$Cmd$none);
+			case 'ShowSuccessSection':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{paymentStatus: $author$project$Main$PaymentSuccessful}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{paymentStatus: $author$project$Main$PaymentTimedOut}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Main$PaymentConfirmed = {$: 'PaymentConfirmed'};
 var $author$project$Main$SelectOption = F2(
 	function (a, b) {
 		return {$: 'SelectOption', a: a, b: b};
 	});
+var $author$project$Main$StartPayment = {$: 'StartPayment'};
 var $author$project$Main$ToggleForm = function (a) {
 	return {$: 'ToggleForm', a: a};
 };
@@ -5270,12 +5333,9 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $author$project$Main$PaymentFailed = {$: 'PaymentFailed'};
 var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
-var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5293,6 +5353,246 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Main$confirmingPaymentView = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center justify-center w-full')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$img,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$src('./src/assets/contactless-payment.gif'),
+					$elm$html$Html$Attributes$alt('Wallet 1'),
+					$elm$html$Html$Attributes$class('w-20 h-20')
+				]),
+			_List_Nil),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center text-md font-[700]')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Complete on Mobile'),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('text-sm font-[600] text-center')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Enter your mobile PIN to complete')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('your payment of GHS20.00')
+								]))
+						]))
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col gap-3 items-center justify-center w-full px-4')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('w-full')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick($author$project$Main$PaymentConfirmed),
+									$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Pay Amount')
+								]))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('w-full')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick($author$project$Main$PaymentFailed),
+									$elm$html$Html$Attributes$class('w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Cancel Payment')
+								]))
+						]))
+				]))
+		]));
+var $author$project$Main$didntGetPromptView = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center justify-center w-full')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$img,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$src('./src/assets/question.gif'),
+					$elm$html$Html$Attributes$alt('Wallet 1'),
+					$elm$html$Html$Attributes$class('w-20 h-20')
+				]),
+			_List_Nil),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center text-md font-[700]')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Didn\'t get a prompt?'),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('text-sm font-[600] text-center')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('To complete this transaction')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('1. Dial *110# and')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('2. Go to option 4 ‘Make payment’')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('3. Now go to option 8 ‘My Approvals’')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Follow the necessary steps then come back')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('to complete payment.')
+								]))
+						]))
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col gap-3 items-center justify-center w-full px-4')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('w-full')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick($author$project$Main$PaymentConfirmed),
+									$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Confirm Payment')
+								]))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('w-full')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick($author$project$Main$PaymentFailed),
+									$elm$html$Html$Attributes$class('w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Cancel Payment')
+								]))
+						]))
+				]))
+		]));
+var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -5325,15 +5625,236 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
+var $author$project$Main$paymentSuccessfulView = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center justify-center w-full')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$img,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$src('./src/assets/verified.gif'),
+					$elm$html$Html$Attributes$alt('Wallet 1'),
+					$elm$html$Html$Attributes$class('w-20 h-20')
+				]),
+			_List_Nil),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('text-md font-[700] text-center')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Payment Made Successfully')
+						]))
+				]))
+		]));
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $author$project$Main$pleaseWaitView = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center justify-center w-full')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$img,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$src('./src/assets/contactless-payment.gif'),
+					$elm$html$Html$Attributes$alt('Wallet 1'),
+					$elm$html$Html$Attributes$class('w-20 h-20')
+				]),
+			_List_Nil),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center text-md font-[700]')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Please Wait'),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('text-sm font-[600] text-center')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('We’re confirming your payment.')
+								]))
+						]))
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col gap-3 items-center justify-center w-full px-4 mb-5')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('w-full')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$disabled(true),
+									$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-[#616478] text-white font-[600] text-sm rounded-md')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Confirming Payment')
+								]))
+						]))
+				]))
+		]));
+var $author$project$Main$transactionTimeoutView = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center justify-center w-full')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$img,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$src('./src/assets/alarm.gif'),
+					$elm$html$Html$Attributes$alt('Wallet 1'),
+					$elm$html$Html$Attributes$class('w-20 h-20')
+				]),
+			_List_Nil),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('text-sm font-[600] text-center')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Transaction timed out, please try another')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('option')
+								]))
+						]))
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col gap-3 items-center justify-center w-full px-4')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('w-full')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick($author$project$Main$StartPayment),
+									$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Try again')
+								]))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('w-full flex flex-col gap-3')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick($author$project$Main$StartPayment),
+									$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Use a different number')
+								])),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick($author$project$Main$StartPayment),
+									$elm$html$Html$Attributes$class('w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Use card instead')
+								]))
+						]))
+				]))
+		]));
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $author$project$Main$view = function (model) {
 	return A2(
@@ -5410,7 +5931,7 @@ var $author$project$Main$view = function (model) {
 															]),
 														_List_fromArray(
 															[
-																$elm$html$Html$text('PaySwitch Merchant')
+																$elm$html$Html$text('Payswitch Merchant')
 															])),
 														A2(
 														$elm$html$Html$div,
@@ -5447,271 +5968,105 @@ var $author$project$Main$view = function (model) {
 											]))
 									]))
 							])),
-						A2(
+						_Utils_eq(model.paymentStatus, $author$project$Main$ConfirmingPayment) ? $author$project$Main$confirmingPaymentView : (_Utils_eq(model.paymentStatus, $author$project$Main$WaitingForPrompt) ? $author$project$Main$didntGetPromptView : (_Utils_eq(model.paymentStatus, $author$project$Main$PleaseWait) ? $author$project$Main$pleaseWaitView : (_Utils_eq(model.paymentStatus, $author$project$Main$PaymentSuccessful) ? $author$project$Main$paymentSuccessfulView : (_Utils_eq(model.paymentStatus, $author$project$Main$PaymentTimedOut) ? $author$project$Main$transactionTimeoutView : A2(
 						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('flex flex-col items-center justify-between ')
-							]),
+						_List_Nil,
 						_List_fromArray(
 							[
 								A2(
 								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('px-4 flex justify-between items-center w-full')
-									]),
+								_List_Nil,
 								_List_fromArray(
 									[
 										A2(
 										$elm$html$Html$div,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$class('inline-flex h-9 w-full items-baseline justify-start rounded-lg bg-gray-100 p-1')
+												$elm$html$Html$Attributes$class('flex flex-col items-center justify-between')
 											]),
 										_List_fromArray(
 											[
 												A2(
-												$elm$html$Html$button,
+												$elm$html$Html$div,
 												_List_fromArray(
 													[
-														$elm$html$Html$Events$onClick(
-														$author$project$Main$ToggleForm('mobile-form')),
-														$elm$html$Html$Attributes$class(
-														'group inline-flex items-center justify-center whitespace-nowrap py-2 align-middle font-semibold transition-all duration-300 ease-in-out disabled:cursor-not-allowed min-w-[32px] gap-1.5 text-xs h-7 w-full rounded-md px-3 drop-shadow' + ((model.activeForm === 'mobile-form') ? ' bg-white stroke-blue-700 text-slate-950' : ' bg-transparent stroke-slate-400 text-slate-600'))
+														$elm$html$Html$Attributes$class('px-4 flex justify-between items-center w-full')
 													]),
 												_List_fromArray(
 													[
 														A2(
-														$elm$html$Html$img,
+														$elm$html$Html$div,
 														_List_fromArray(
 															[
-																$elm$html$Html$Attributes$src(
-																(model.activeForm === 'mobile-form') ? './src/assets/mobile.svg' : './src/assets/mobileoutlined.svg'),
-																$elm$html$Html$Attributes$alt('Mobile Money'),
-																$elm$html$Html$Attributes$class('w-4 h-4')
+																$elm$html$Html$Attributes$class('inline-flex h-9 w-full items-baseline justify-start rounded-lg bg-gray-100 p-1')
 															]),
-														_List_Nil),
-														$elm$html$Html$text('Pay with Mobile Money')
-													])),
-												A2(
-												$elm$html$Html$button,
-												_List_fromArray(
-													[
-														$elm$html$Html$Events$onClick(
-														$author$project$Main$ToggleForm('card-form')),
-														$elm$html$Html$Attributes$class(
-														'group inline-flex items-center justify-center whitespace-nowrap py-2 align-middle font-semibold transition-all duration-300 ease-in-out disabled:cursor-not-allowed min-w-[32px] gap-1.5 text-xs h-7 w-full rounded-md px-3 drop-shadow' + ((model.activeForm === 'card-form') ? ' bg-white stroke-blue-700 text-slate-950' : ' bg-transparent stroke-slate-400 text-slate-600'))
-													]),
-												_List_fromArray(
-													[
-														A2(
-														$elm$html$Html$img,
 														_List_fromArray(
 															[
-																$elm$html$Html$Attributes$src(
-																(model.activeForm === 'card-form') ? './src/assets/cardoutlined.svg' : './src/assets/card.svg'),
-																$elm$html$Html$Attributes$alt('Card'),
-																$elm$html$Html$Attributes$class('w-4 h-4')
-															]),
-														_List_Nil),
-														$elm$html$Html$text('Pay with Card')
+																A2(
+																$elm$html$Html$button,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Events$onClick(
+																		$author$project$Main$ToggleForm('mobile-form')),
+																		$elm$html$Html$Attributes$class(
+																		'group inline-flex items-center justify-center whitespace-nowrap py-2 align-middle font-semibold transition-all duration-300 ease-in-out disabled:cursor-not-allowed min-w-[32px] gap-1.5 text-xs h-7 w-full rounded-md px-3 drop-shadow' + ((model.activeForm === 'mobile-form') ? ' bg-white stroke-blue-700 text-slate-950' : ' bg-transparent stroke-slate-400 text-slate-600'))
+																	]),
+																_List_fromArray(
+																	[
+																		A2(
+																		$elm$html$Html$img,
+																		_List_fromArray(
+																			[
+																				$elm$html$Html$Attributes$src(
+																				(model.activeForm === 'mobile-form') ? './src/assets/mobile.svg' : './src/assets/mobileoutlined.svg'),
+																				$elm$html$Html$Attributes$alt('Mobile Money'),
+																				$elm$html$Html$Attributes$class('w-4 h-4')
+																			]),
+																		_List_Nil),
+																		$elm$html$Html$text('Pay with Mobile Money')
+																	])),
+																A2(
+																$elm$html$Html$button,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Events$onClick(
+																		$author$project$Main$ToggleForm('card-form')),
+																		$elm$html$Html$Attributes$class(
+																		'group inline-flex items-center justify-center whitespace-nowrap py-2 align-middle font-semibold transition-all duration-300 ease-in-out disabled:cursor-not-allowed min-w-[32px] gap-1.5 text-xs h-7 w-full rounded-md px-3 drop-shadow' + ((model.activeForm === 'card-form') ? ' bg-white stroke-blue-700 text-slate-950' : ' bg-transparent stroke-slate-400 text-slate-600'))
+																	]),
+																_List_fromArray(
+																	[
+																		A2(
+																		$elm$html$Html$img,
+																		_List_fromArray(
+																			[
+																				$elm$html$Html$Attributes$src(
+																				(model.activeForm === 'card-form') ? './src/assets/cardoutlined.svg' : './src/assets/card.svg'),
+																				$elm$html$Html$Attributes$alt('Card'),
+																				$elm$html$Html$Attributes$class('w-4 h-4')
+																			]),
+																		_List_Nil),
+																		$elm$html$Html$text('Pay with Card')
+																	]))
+															]))
 													]))
-											]))
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('text-center  text-xs px-4 text-gray-600 py-4')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Complete your purchase by providing your payment details.')
-							])),
-						(model.activeForm === 'mobile-form') ? A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('w-full px-4 pt-4 ')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$label,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$for('phone'),
-										$elm$html$Html$Attributes$class('block text-xs font-[600] mb-1 text-[#616478]')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Mobile Network')
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('relative w-full mb-5')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Events$onClick($author$project$Main$ToggleDropdown),
-												$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm flex items-center justify-between focus:ring-blue-500 focus:outline-none')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text(model.selectedNetwork),
-												A2(
-												$elm$html$Html$img,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$src(model.selectedIcon),
-														$elm$html$Html$Attributes$alt(''),
-														$elm$html$Html$Attributes$class('w-4 h-4 hidden')
-													]),
-												_List_Nil),
-												A2(
-												$elm$html$Html$img,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$src('./src/assets/arrowdown.svg'),
-														$elm$html$Html$Attributes$alt('Dropdown Arrow'),
-														$elm$html$Html$Attributes$class('w-4 h-4')
-													]),
-												_List_Nil)
 											])),
-										model.isDropdownOpen ? A2(
+										A2(
 										$elm$html$Html$div,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$class('absolute top-full left-0 w-full bg-white border border-gray-300 rounded shadow-md z-10')
+												$elm$html$Html$Attributes$class('text-center text-xs px-4 text-gray-600 py-4')
 											]),
 										_List_fromArray(
 											[
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Events$onClick(
-														A2($author$project$Main$SelectOption, 'MTN', './src/assets/momo.svg')),
-														$elm$html$Html$Attributes$class('flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100')
-													]),
-												_List_fromArray(
-													[
-														A2(
-														$elm$html$Html$img,
-														_List_fromArray(
-															[
-																$elm$html$Html$Attributes$src('./src/assets/momo.svg'),
-																$elm$html$Html$Attributes$alt('MTN'),
-																$elm$html$Html$Attributes$class('w-5 h-5 mr-2')
-															]),
-														_List_Nil),
-														$elm$html$Html$text('MTN')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Events$onClick(
-														A2($author$project$Main$SelectOption, 'Telecel', './src/assets/telecel.svg')),
-														$elm$html$Html$Attributes$class('flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100')
-													]),
-												_List_fromArray(
-													[
-														A2(
-														$elm$html$Html$img,
-														_List_fromArray(
-															[
-																$elm$html$Html$Attributes$src('./src/assets/telecel.svg'),
-																$elm$html$Html$Attributes$alt('Telecel'),
-																$elm$html$Html$Attributes$class('w-5 h-5 mr-2')
-															]),
-														_List_Nil),
-														$elm$html$Html$text('Telecel (Formally Vodafone)')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Events$onClick(
-														A2($author$project$Main$SelectOption, 'AirtelTigo', './src/assets/at.svg')),
-														$elm$html$Html$Attributes$class('flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100')
-													]),
-												_List_fromArray(
-													[
-														A2(
-														$elm$html$Html$img,
-														_List_fromArray(
-															[
-																$elm$html$Html$Attributes$src('./src/assets/at.svg'),
-																$elm$html$Html$Attributes$alt('AirtelTigo'),
-																$elm$html$Html$Attributes$class('w-5 h-5 mr-2')
-															]),
-														_List_Nil),
-														$elm$html$Html$text('AirtelTigo')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Events$onClick(
-														A2($author$project$Main$SelectOption, 'G-Money', './src/assets/gmoney.svg')),
-														$elm$html$Html$Attributes$class('flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100')
-													]),
-												_List_fromArray(
-													[
-														A2(
-														$elm$html$Html$img,
-														_List_fromArray(
-															[
-																$elm$html$Html$Attributes$src('./src/assets/gmoney.svg'),
-																$elm$html$Html$Attributes$alt('G-Money'),
-																$elm$html$Html$Attributes$class('w-5 h-5 mr-2')
-															]),
-														_List_Nil),
-														$elm$html$Html$text('G-Money')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Events$onClick(
-														A2($author$project$Main$SelectOption, 'Zeepay', './src/assets/zeepay.svg')),
-														$elm$html$Html$Attributes$class('flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100')
-													]),
-												_List_fromArray(
-													[
-														A2(
-														$elm$html$Html$img,
-														_List_fromArray(
-															[
-																$elm$html$Html$Attributes$src('./src/assets/zeepay.svg'),
-																$elm$html$Html$Attributes$alt('Zeepay'),
-																$elm$html$Html$Attributes$class('w-5 h-5 mr-2')
-															]),
-														_List_Nil),
-														$elm$html$Html$text('Zeepay')
-													]))
-											])) : $elm$html$Html$text('')
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('form-section pb-3 gap-2 flex flex-col')
-									]),
-								_List_fromArray(
-									[
-										A2(
+												$elm$html$Html$text('Complete your purchase by providing your payment details.')
+											])),
+										(model.activeForm === 'mobile-form') ? A2(
 										$elm$html$Html$div,
-										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('w-full px-4 pt-4')
+											]),
 										_List_fromArray(
 											[
 												A2(
@@ -5723,241 +6078,339 @@ var $author$project$Main$view = function (model) {
 													]),
 												_List_fromArray(
 													[
-														$elm$html$Html$text('Phone Number')
-													])),
-												A2(
-												$elm$html$Html$input,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$type_('tel'),
-														$elm$html$Html$Attributes$id('phone'),
-														$elm$html$Html$Attributes$placeholder('E.g 021 123 3456'),
-														$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
-														$elm$html$Html$Events$onInput($author$project$Main$UpdatePhone)
-													]),
-												_List_Nil)
-											]))
-									]))
-							])) : $elm$html$Html$text(''),
-						(model.activeForm === 'card-form') ? A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('form-section px-4 pt-4 pb-3 gap-4 flex flex-col ')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$div,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$label,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$for('card-name'),
-												$elm$html$Html$Attributes$class('block text-xs font-[600] mb-1 text-[#616478]')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Card name')
-											])),
-										A2(
-										$elm$html$Html$input,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$type_('text'),
-												$elm$html$Html$Attributes$id('card-name'),
-												$elm$html$Html$Attributes$placeholder('E.g John Doe'),
-												$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
-												$elm$html$Html$Events$onInput($author$project$Main$UpdateCardName)
-											]),
-										_List_Nil)
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$label,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$for('card-number'),
-												$elm$html$Html$Attributes$class('block text-xs font-[600] mb-1  text-[#616478]')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Card Number')
-											])),
-										A2(
-										$elm$html$Html$input,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$type_('tel'),
-												$elm$html$Html$Attributes$id('card-number'),
-												$elm$html$Html$Attributes$placeholder('0000 0000 0000 0000'),
-												$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
-												$elm$html$Html$Events$onInput($author$project$Main$UpdateCardNumber)
-											]),
-										_List_Nil)
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('flex')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('gap-1 flex flex-col')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$label,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$for('expiry'),
-														$elm$html$Html$Attributes$class('block text-xs font-[600] text-[#616478]')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text('Expiry')
-													])),
-												A2(
-												$elm$html$Html$input,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$type_('tel'),
-														$elm$html$Html$Attributes$id('expiry'),
-														$elm$html$Html$Attributes$placeholder('mm/yy'),
-														$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
-														$elm$html$Html$Events$onInput($author$project$Main$UpdateExpiry)
-													]),
-												_List_Nil)
-											])),
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('pl-4 gap-1 flex flex-col')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$label,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$for('cvv'),
-														$elm$html$Html$Attributes$class('block text-xs font-[600] text-[#616478]')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text('CVV')
-													])),
-												A2(
-												$elm$html$Html$input,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$type_('tel'),
-														$elm$html$Html$Attributes$id('cvv'),
-														$elm$html$Html$Attributes$placeholder('000'),
-														$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
-														$elm$html$Html$Events$onInput($author$project$Main$UpdateCVV)
-													]),
-												_List_Nil)
-											]))
-									]))
-							])) : $elm$html$Html$text(''),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('p-4 hidden')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$type_('submit'),
-										$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Pay Amount')
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center hidden justify-center w-full')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$img,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$src('./src/assets/contactless-payment.gif'),
-										$elm$html$Html$Attributes$alt('Wallet 1'),
-										$elm$html$Html$Attributes$class('w-20 h-20')
-									]),
-								_List_Nil),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center text-md font-[700]')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Complete on Mobile'),
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('text-sm font-[600] text-center')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$div,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text('Enter your mobile PIN to complete')
+														$elm$html$Html$text('Mobile Network')
 													])),
 												A2(
 												$elm$html$Html$div,
-												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text('your payment of GHS20.00')
+														$elm$html$Html$Attributes$class('relative w-full mb-5')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Events$onClick($author$project$Main$ToggleDropdown),
+																$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm flex items-center justify-between focus:ring-blue-500 focus:outline-none')
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text(model.selectedNetwork),
+																A2(
+																$elm$html$Html$img,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$src(model.selectedIcon),
+																		$elm$html$Html$Attributes$alt(''),
+																		$elm$html$Html$Attributes$class('w-4 h-4 hidden')
+																	]),
+																_List_Nil),
+																A2(
+																$elm$html$Html$img,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$src('./src/assets/arrowdown.svg'),
+																		$elm$html$Html$Attributes$alt('Dropdown Arrow'),
+																		$elm$html$Html$Attributes$class('w-4 h-4')
+																	]),
+																_List_Nil)
+															])),
+														model.isDropdownOpen ? A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('absolute top-full left-0 w-full bg-white border border-gray-300 rounded shadow-md z-10')
+															]),
+														_List_fromArray(
+															[
+																A2(
+																$elm$html$Html$div,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Events$onClick(
+																		A2($author$project$Main$SelectOption, 'MTN', './src/assets/momo.svg')),
+																		$elm$html$Html$Attributes$class('flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100')
+																	]),
+																_List_fromArray(
+																	[
+																		A2(
+																		$elm$html$Html$img,
+																		_List_fromArray(
+																			[
+																				$elm$html$Html$Attributes$src('./src/assets/momo.svg'),
+																				$elm$html$Html$Attributes$alt('MTN'),
+																				$elm$html$Html$Attributes$class('w-5 h-5 mr-2')
+																			]),
+																		_List_Nil),
+																		$elm$html$Html$text('MTN')
+																	])),
+																A2(
+																$elm$html$Html$div,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Events$onClick(
+																		A2($author$project$Main$SelectOption, 'Telecel', './src/assets/telecel.svg')),
+																		$elm$html$Html$Attributes$class('flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100')
+																	]),
+																_List_fromArray(
+																	[
+																		A2(
+																		$elm$html$Html$img,
+																		_List_fromArray(
+																			[
+																				$elm$html$Html$Attributes$src('./src/assets/telecel.svg'),
+																				$elm$html$Html$Attributes$alt('Telecel'),
+																				$elm$html$Html$Attributes$class('w-5 h-5 mr-2')
+																			]),
+																		_List_Nil),
+																		$elm$html$Html$text('Telecel (Formally Vodafone)')
+																	])),
+																A2(
+																$elm$html$Html$div,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Events$onClick(
+																		A2($author$project$Main$SelectOption, 'AirtelTigo', './src/assets/at.svg')),
+																		$elm$html$Html$Attributes$class('flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100')
+																	]),
+																_List_fromArray(
+																	[
+																		A2(
+																		$elm$html$Html$img,
+																		_List_fromArray(
+																			[
+																				$elm$html$Html$Attributes$src('./src/assets/at.svg'),
+																				$elm$html$Html$Attributes$alt('AirtelTigo'),
+																				$elm$html$Html$Attributes$class('w-5 h-5 mr-2')
+																			]),
+																		_List_Nil),
+																		$elm$html$Html$text('AirtelTigo')
+																	])),
+																A2(
+																$elm$html$Html$div,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Events$onClick(
+																		A2($author$project$Main$SelectOption, 'G-Money', './src/assets/gmoney.svg')),
+																		$elm$html$Html$Attributes$class('flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100')
+																	]),
+																_List_fromArray(
+																	[
+																		A2(
+																		$elm$html$Html$img,
+																		_List_fromArray(
+																			[
+																				$elm$html$Html$Attributes$src('./src/assets/gmoney.svg'),
+																				$elm$html$Html$Attributes$alt('G-Money'),
+																				$elm$html$Html$Attributes$class('w-5 h-5 mr-2')
+																			]),
+																		_List_Nil),
+																		$elm$html$Html$text('G-Money')
+																	])),
+																A2(
+																$elm$html$Html$div,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Events$onClick(
+																		A2($author$project$Main$SelectOption, 'Zeepay', './src/assets/zeepay.svg')),
+																		$elm$html$Html$Attributes$class('flex items-center p-2 text-sm cursor-pointer transition hover:bg-gray-100')
+																	]),
+																_List_fromArray(
+																	[
+																		A2(
+																		$elm$html$Html$img,
+																		_List_fromArray(
+																			[
+																				$elm$html$Html$Attributes$src('./src/assets/zeepay.svg'),
+																				$elm$html$Html$Attributes$alt('Zeepay'),
+																				$elm$html$Html$Attributes$class('w-5 h-5 mr-2')
+																			]),
+																		_List_Nil),
+																		$elm$html$Html$text('Zeepay')
+																	]))
+															])) : $elm$html$Html$text('')
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('form-section pb-3 gap-2 flex flex-col')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$div,
+														_List_Nil,
+														_List_fromArray(
+															[
+																A2(
+																$elm$html$Html$label,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$for('phone'),
+																		$elm$html$Html$Attributes$class('block text-xs font-[600] mb-1 text-[#616478]')
+																	]),
+																_List_fromArray(
+																	[
+																		$elm$html$Html$text('Phone Number')
+																	])),
+																A2(
+																$elm$html$Html$input,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$type_('tel'),
+																		$elm$html$Html$Attributes$id('phone'),
+																		$elm$html$Html$Attributes$placeholder('E.g 021 123 3456'),
+																		$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
+																		$elm$html$Html$Events$onInput($author$project$Main$UpdatePhone)
+																	]),
+																_List_Nil)
+															]))
 													]))
-											]))
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('flex flex-col gap-3 items-center justify-center w-full px-4')
-									]),
-								_List_fromArray(
-									[
+											])) : $elm$html$Html$text(''),
+										(model.activeForm === 'card-form') ? A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('form-section px-4 pt-4 pb-3 gap-4 flex flex-col')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$label,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$for('card-name'),
+																$elm$html$Html$Attributes$class('block text-xs font-[600] mb-1 text-[#616478]')
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text('Card name')
+															])),
+														A2(
+														$elm$html$Html$input,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$type_('text'),
+																$elm$html$Html$Attributes$id('card-name'),
+																$elm$html$Html$Attributes$placeholder('E.g John Doe'),
+																$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
+																$elm$html$Html$Events$onInput($author$project$Main$UpdateCardName)
+															]),
+														_List_Nil)
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$label,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$for('card-number'),
+																$elm$html$Html$Attributes$class('block text-xs font-[600] mb-1  text-[#616478]')
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text('Card Number')
+															])),
+														A2(
+														$elm$html$Html$input,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$type_('tel'),
+																$elm$html$Html$Attributes$id('card-number'),
+																$elm$html$Html$Attributes$placeholder('0000 0000 0000 0000'),
+																$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
+																$elm$html$Html$Events$onInput($author$project$Main$UpdateCardNumber)
+															]),
+														_List_Nil)
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('flex')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('gap-1 flex flex-col')
+															]),
+														_List_fromArray(
+															[
+																A2(
+																$elm$html$Html$label,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$for('expiry'),
+																		$elm$html$Html$Attributes$class('block text-xs font-[600] text-[#616478]')
+																	]),
+																_List_fromArray(
+																	[
+																		$elm$html$Html$text('Expiry')
+																	])),
+																A2(
+																$elm$html$Html$input,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$type_('tel'),
+																		$elm$html$Html$Attributes$id('expiry'),
+																		$elm$html$Html$Attributes$placeholder('mm/yy'),
+																		$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
+																		$elm$html$Html$Events$onInput($author$project$Main$UpdateExpiry)
+																	]),
+																_List_Nil)
+															])),
+														A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('pl-4 gap-1 flex flex-col')
+															]),
+														_List_fromArray(
+															[
+																A2(
+																$elm$html$Html$label,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$for('cvv'),
+																		$elm$html$Html$Attributes$class('block text-xs font-[600] text-[#616478]')
+																	]),
+																_List_fromArray(
+																	[
+																		$elm$html$Html$text('CVV')
+																	])),
+																A2(
+																$elm$html$Html$input,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$type_('tel'),
+																		$elm$html$Html$Attributes$id('cvv'),
+																		$elm$html$Html$Attributes$placeholder('000'),
+																		$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
+																		$elm$html$Html$Events$onInput($author$project$Main$UpdateCVV)
+																	]),
+																_List_Nil)
+															]))
+													]))
+											])) : $elm$html$Html$text(''),
 										A2(
 										$elm$html$Html$div,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$class('w-full')
+												$elm$html$Html$Attributes$class('p-4')
 											]),
 										_List_fromArray(
 											[
@@ -5966,360 +6419,17 @@ var $author$project$Main$view = function (model) {
 												_List_fromArray(
 													[
 														$elm$html$Html$Attributes$type_('submit'),
-														$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700')
+														$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700'),
+														$elm$html$Html$Events$onClick(
+														(model.activeForm === 'mobile-form') ? $author$project$Main$StartPayment : $author$project$Main$PaymentConfirmed)
 													]),
 												_List_fromArray(
 													[
 														$elm$html$Html$text('Pay Amount')
 													]))
-											])),
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('w-full')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$button,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$type_('submit'),
-														$elm$html$Html$Attributes$class('w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text('Cancel Payment')
-													]))
 											]))
 									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center hidden justify-center w-full')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$img,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$src('./src/assets/question.gif'),
-										$elm$html$Html$Attributes$alt('Wallet 1'),
-										$elm$html$Html$Attributes$class('w-20 h-20')
-									]),
-								_List_Nil),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center text-md font-[700]')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Didn\'t get a prompt?'),
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('text-sm font-[600] text-center')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$div,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text('To complete this transaction')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$class('pt-5')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text(' ')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text('1. Dial *110# and')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text('2. Go to option 4 ‘Make  payment’')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text('3. Now go to option 8 ‘My Approvals’')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$class('pt-5')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text(' ')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text('Follow the necessary steps then come back')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text('to complete payment.')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$class('pt-5')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text(' ')
-													]))
-											]))
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('flex flex-col gap-3 items-center justify-center w-full px-4')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('w-full')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$button,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$type_('submit'),
-														$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text('Confirm Payment')
-													]))
-											])),
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('w-full')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$button,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$type_('submit'),
-														$elm$html$Html$Attributes$class('w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text('Cancel Payment')
-													]))
-											]))
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 items-center hidden justify-center w-full')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$img,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$src('./src/assets/alarm.gif'),
-										$elm$html$Html$Attributes$alt('Wallet 1'),
-										$elm$html$Html$Attributes$class('w-20 h-20')
-									]),
-								_List_Nil),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('text-sm font-[600] text-center')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$div,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text('Transaction timed out, please try another')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text('option')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$class('pt-5')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text(' ')
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$class('pt-5')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text(' ')
-													]))
-											]))
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('flex flex-col gap-3 items-center justify-center w-full px-4')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('w-full')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$button,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$type_('submit'),
-														$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text('Try again')
-													]))
-											])),
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('w-full flex flex-col gap-3')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$button,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$type_('submit'),
-														$elm$html$Html$Attributes$class('w-full h-11 py-2  bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
-													]),
-												_List_fromArray(
-													[
-														$elm$html$Html$text('Use a different number')
-													]))
-											])),
-										A2(
-										$elm$html$Html$button,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$type_('submit'),
-												$elm$html$Html$Attributes$class('w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Use card instead')
-											]))
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('flex flex-col pt-5 gap-5 hidden items-center justify-center w-full')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$img,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$src('./src/assets/verified.gif'),
-										$elm$html$Html$Attributes$alt('Wallet 1'),
-										$elm$html$Html$Attributes$class('w-20 h-20')
-									]),
-								_List_Nil),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('flex flex-col gap-2 items-center justify-center')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$div,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('text-md font-[700] text-center')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Payment Made Successfully')
-											]))
-									]))
-							])),
+							])))))),
 						A2(
 						$elm$html$Html$div,
 						_List_fromArray(
@@ -6332,9 +6442,9 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('flex items-center  justify-center w-full gap-2 text-xs')
+										$elm$html$Html$Attributes$class('flex items-center justify-center w-full gap-2 text-xs')
 									]),
-								_List_fromArray(
+								_Utils_eq(model.paymentStatus, $author$project$Main$NotStarted) ? _List_fromArray(
 									[
 										$elm$html$Html$text('Supported Wallets:'),
 										(model.activeForm === 'card-form') ? A2(
@@ -6410,7 +6520,7 @@ var $author$project$Main$view = function (model) {
 													]),
 												_List_Nil)
 											]))
-									])),
+									]) : _List_Nil),
 								A2(
 								$elm$html$Html$div,
 								_List_fromArray(
