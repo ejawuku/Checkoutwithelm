@@ -5183,8 +5183,21 @@ var $author$project$Main$PleaseWait = {$: 'PleaseWait'};
 var $author$project$Main$ShowPromptSection = {$: 'ShowPromptSection'};
 var $author$project$Main$ShowSuccessSection = {$: 'ShowSuccessSection'};
 var $author$project$Main$WaitingForPrompt = {$: 'WaitingForPrompt'};
+var $elm$core$String$concat = function (strings) {
+	return A2($elm$core$String$join, '', strings);
+};
+var $elm$core$String$filter = _String_filter;
+var $elm$core$String$cons = _String_cons;
+var $elm$core$String$fromChar = function (_char) {
+	return A2($elm$core$String$cons, _char, '');
+};
+var $elm$core$Basics$modBy = _Basics_modBy;
 var $elm$core$Basics$not = _Basics_not;
 var $elm$core$Process$sleep = _Process_sleep;
+var $elm$core$String$foldr = _String_foldr;
+var $elm$core$String$toList = function (string) {
+	return A3($elm$core$String$foldr, $elm$core$List$cons, _List_Nil, string);
+};
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -5210,39 +5223,72 @@ var $author$project$Main$update = F2(
 						{activeForm: formId}),
 					$elm$core$Platform$Cmd$none);
 			case 'UpdatePhone':
-				var phone = msg.a;
+				var input = msg.a;
+				var filteredInput = A2(
+					$elm$core$String$left,
+					10,
+					A2($elm$core$String$filter, $elm$core$Char$isDigit, input));
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{phone: phone}),
+						{phone: filteredInput}),
 					$elm$core$Platform$Cmd$none);
 			case 'UpdateCardName':
-				var cardName = msg.a;
+				var input = msg.a;
+				var filteredInput = A2(
+					$elm$core$String$filter,
+					function (_char) {
+						return $elm$core$Char$isAlpha(_char) || (_Utils_eq(
+							_char,
+							_Utils_chr(' ')) || _Utils_eq(
+							_char,
+							_Utils_chr('-')));
+					},
+					input);
+				var truncatedInput = A2($elm$core$String$left, 30, filteredInput);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{cardName: cardName}),
+						{cardName: truncatedInput}),
 					$elm$core$Platform$Cmd$none);
 			case 'UpdateCardNumber':
-				var cardNumber = msg.a;
+				var input = msg.a;
+				var filteredInput = A2($elm$core$String$filter, $elm$core$Char$isDigit, input);
+				var truncatedInput = A2($elm$core$String$left, 16, filteredInput);
+				var formattedInput = $elm$core$String$concat(
+					A2(
+						$elm$core$List$indexedMap,
+						F2(
+							function (i, _char) {
+								return ((i > 0) && (!A2($elm$core$Basics$modBy, 4, i))) ? (' ' + $elm$core$String$fromChar(_char)) : $elm$core$String$fromChar(_char);
+							}),
+						$elm$core$String$toList(truncatedInput)));
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{cardNumber: cardNumber}),
+						{cardNumber: formattedInput}),
 					$elm$core$Platform$Cmd$none);
 			case 'UpdateExpiry':
-				var expiry = msg.a;
+				var input = msg.a;
+				var filteredInput = A2($elm$core$String$filter, $elm$core$Char$isDigit, input);
+				var formattedInput = ($elm$core$String$length(filteredInput) > 2) ? (A2($elm$core$String$left, 2, filteredInput) + ('/' + A3($elm$core$String$slice, 2, 4, filteredInput))) : filteredInput;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{expiry: expiry}),
+						{
+							expiry: A2($elm$core$String$left, 5, formattedInput)
+						}),
 					$elm$core$Platform$Cmd$none);
 			case 'UpdateCVV':
 				var cvv = msg.a;
+				var filteredCVV = A2(
+					$elm$core$String$left,
+					3,
+					A2($elm$core$String$filter, $elm$core$Char$isDigit, cvv));
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{cvv: cvv}),
+						{cvv: filteredCVV}),
 					$elm$core$Platform$Cmd$none);
 			case 'StartPayment':
 				return _Utils_Tuple2(
@@ -5589,6 +5635,15 @@ var $author$project$Main$didntGetPromptView = A2(
 						]))
 				]))
 		]));
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$input = _VirtualDom_node('input');
@@ -5663,15 +5718,6 @@ var $author$project$Main$paymentSuccessfulView = A2(
 				]))
 		]));
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $author$project$Main$pleaseWaitView = A2(
 	$elm$html$Html$div,
 	_List_fromArray(
@@ -5856,6 +5902,7 @@ var $author$project$Main$transactionTimeoutView = A2(
 				]))
 		]));
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -5937,7 +5984,7 @@ var $author$project$Main$view = function (model) {
 														$elm$html$Html$div,
 														_List_fromArray(
 															[
-																$elm$html$Html$Attributes$class('text-white text-[10px] p-1 w-fit rounded-md bg-blue-500 flex items-center')
+																$elm$html$Html$Attributes$class('text-white text-[10px] font-[700] p-1 w-fit rounded-md bg-blue-500 flex items-center')
 															]),
 														_List_fromArray(
 															[
@@ -5960,7 +6007,7 @@ var $author$project$Main$view = function (model) {
 											[
 												$elm$html$Html$Events$onClick(
 												$author$project$Main$ToggleForm('close')),
-												$elm$html$Html$Attributes$class('text-red-600 text-sm font-[500]')
+												$elm$html$Html$Attributes$class('text-[#EB1717] text-sm font-[700]')
 											]),
 										_List_fromArray(
 											[
@@ -6055,7 +6102,7 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$div,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$class('text-center text-xs px-4 text-gray-600 py-4')
+												$elm$html$Html$Attributes$class('text-center text-xs px-4 text-[##1E1E1E] font-[600] py-4')
 											]),
 										_List_fromArray(
 											[
@@ -6264,7 +6311,8 @@ var $author$project$Main$view = function (model) {
 																		$elm$html$Html$Attributes$id('phone'),
 																		$elm$html$Html$Attributes$placeholder('E.g 021 123 3456'),
 																		$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
-																		$elm$html$Html$Events$onInput($author$project$Main$UpdatePhone)
+																		$elm$html$Html$Events$onInput($author$project$Main$UpdatePhone),
+																		$elm$html$Html$Attributes$value(model.phone)
 																	]),
 																_List_Nil)
 															]))
@@ -6302,7 +6350,8 @@ var $author$project$Main$view = function (model) {
 																$elm$html$Html$Attributes$id('card-name'),
 																$elm$html$Html$Attributes$placeholder('E.g John Doe'),
 																$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
-																$elm$html$Html$Events$onInput($author$project$Main$UpdateCardName)
+																$elm$html$Html$Events$onInput($author$project$Main$UpdateCardName),
+																$elm$html$Html$Attributes$value(model.cardName)
 															]),
 														_List_Nil)
 													])),
@@ -6330,7 +6379,8 @@ var $author$project$Main$view = function (model) {
 																$elm$html$Html$Attributes$id('card-number'),
 																$elm$html$Html$Attributes$placeholder('0000 0000 0000 0000'),
 																$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
-																$elm$html$Html$Events$onInput($author$project$Main$UpdateCardNumber)
+																$elm$html$Html$Events$onInput($author$project$Main$UpdateCardNumber),
+																$elm$html$Html$Attributes$value(model.cardNumber)
 															]),
 														_List_Nil)
 													])),
@@ -6369,7 +6419,8 @@ var $author$project$Main$view = function (model) {
 																		$elm$html$Html$Attributes$id('expiry'),
 																		$elm$html$Html$Attributes$placeholder('mm/yy'),
 																		$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
-																		$elm$html$Html$Events$onInput($author$project$Main$UpdateExpiry)
+																		$elm$html$Html$Events$onInput($author$project$Main$UpdateExpiry),
+																		$elm$html$Html$Attributes$value(model.expiry)
 																	]),
 																_List_Nil)
 															])),
@@ -6400,7 +6451,8 @@ var $author$project$Main$view = function (model) {
 																		$elm$html$Html$Attributes$id('cvv'),
 																		$elm$html$Html$Attributes$placeholder('000'),
 																		$elm$html$Html$Attributes$class('w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none'),
-																		$elm$html$Html$Events$onInput($author$project$Main$UpdateCVV)
+																		$elm$html$Html$Events$onInput($author$project$Main$UpdateCVV),
+																		$elm$html$Html$Attributes$value(model.cvv)
 																	]),
 																_List_Nil)
 															]))
@@ -6419,9 +6471,12 @@ var $author$project$Main$view = function (model) {
 												_List_fromArray(
 													[
 														$elm$html$Html$Attributes$type_('submit'),
-														$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700'),
+														$elm$html$Html$Attributes$class(
+														'w-full h-11 py-2 text-white font-[600] text-sm rounded-md' + (((model.activeForm === 'mobile-form') ? ((model.selectedNetwork === '-- Select a mobile network --') || ((model.phone === '') || ($elm$core$String$length(model.phone) < 10))) : ((model.cvv === '') || (($elm$core$String$length(model.cvv) < 3) || (($elm$core$String$length(model.expiry) < 5) || (($elm$core$String$length(model.cardNumber) < 16) || ((model.cardName === '') || ((model.cardNumber === '') || (model.expiry === '')))))))) ? ' bg-gray-400' : ' bg-[#2D61E3] hover:bg-blue-700')),
 														$elm$html$Html$Events$onClick(
-														(model.activeForm === 'mobile-form') ? $author$project$Main$StartPayment : $author$project$Main$PaymentConfirmed)
+														(model.activeForm === 'mobile-form') ? $author$project$Main$StartPayment : $author$project$Main$PaymentConfirmed),
+														$elm$html$Html$Attributes$disabled(
+														(model.activeForm === 'mobile-form') ? ((model.selectedNetwork === '-- Select a mobile network --') || (model.phone === '')) : ((model.cvv === '') || ((model.cardName === '') || ((model.cardNumber === '') || (model.expiry === '')))))
 													]),
 												_List_fromArray(
 													[
@@ -6442,7 +6497,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('flex items-center justify-center w-full gap-2 text-xs')
+										$elm$html$Html$Attributes$class('flex items-center justify-center w-full gap-2 text-xs text-[#1E1E1E] font-[600]')
 									]),
 								_Utils_eq(model.paymentStatus, $author$project$Main$NotStarted) ? _List_fromArray(
 									[
@@ -6525,7 +6580,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('text-[10px] text-[#222357] flex gap-1 justify-center items-center mb-4 mt-2')
+										$elm$html$Html$Attributes$class('text-[11px] text-[#222357] font-[600] flex gap-1 justify-center items-center mb-4 mt-2')
 									]),
 								_List_fromArray(
 									[

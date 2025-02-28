@@ -2,7 +2,7 @@ port module Main exposing (main)
 
 import Browser
 import Html exposing (Html, button, div, img, input, label, span, text)
-import Html.Attributes exposing (alt, class, disabled, for, id, placeholder, src, type_)
+import Html.Attributes exposing (alt, class, disabled, for, id, placeholder, src, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Process
 import Task
@@ -92,20 +92,82 @@ update msg model =
         ToggleForm formId ->
             ( { model | activeForm = formId }, Cmd.none )
 
-        UpdatePhone phone ->
-            ( { model | phone = phone }, Cmd.none )
+        UpdatePhone input ->
+            let
+                -- Filter out non-numeric characters and limit to 10 digits
+                filteredInput =
+                    input
+                        |> String.filter Char.isDigit
+                        |> String.left 10
+            in
+            ( { model | phone = filteredInput }, Cmd.none )
 
-        UpdateCardName cardName ->
-            ( { model | cardName = cardName }, Cmd.none )
+        UpdateCardName input ->
+            let
+                -- Filter out unwanted characters (only allow letters, spaces, and hyphens)
+                filteredInput =
+                    input
+                        |> String.filter (\char -> Char.isAlpha char || char == ' ' || char == '-')
 
-        UpdateCardNumber cardNumber ->
-            ( { model | cardNumber = cardNumber }, Cmd.none )
+                -- Limit to 30 characters
+                truncatedInput =
+                    String.left 30 filteredInput
+            in
+            ( { model | cardName = truncatedInput }, Cmd.none )
 
-        UpdateExpiry expiry ->
-            ( { model | expiry = expiry }, Cmd.none )
+        UpdateCardNumber input ->
+            let
+                -- Filter out non-numeric characters
+                filteredInput =
+                    input
+                        |> String.filter Char.isDigit
+
+                -- Limit to 16 digits
+                truncatedInput =
+                    String.left 16 filteredInput
+
+                -- Format as "0000 0000 0000 0000"
+                formattedInput =
+                    truncatedInput
+                        |> String.toList
+                        |> List.indexedMap
+                            (\i char ->
+                                if i > 0 && modBy 4 i == 0 then
+                                    " " ++ String.fromChar char
+
+                                else
+                                    String.fromChar char
+                            )
+                        |> String.concat
+            in
+            ( { model | cardNumber = formattedInput }, Cmd.none )
+
+        UpdateExpiry input ->
+            let
+                -- Filter out non-numeric characters
+                filteredInput =
+                    input
+                        |> String.filter Char.isDigit
+
+                -- Limit to 4 digits and insert "/" after 2 characters
+                formattedInput =
+                    if String.length filteredInput > 2 then
+                        String.left 2 filteredInput ++ "/" ++ String.slice 2 4 filteredInput
+
+                    else
+                        filteredInput
+            in
+            ( { model | expiry = String.left 5 formattedInput }, Cmd.none )
 
         UpdateCVV cvv ->
-            ( { model | cvv = cvv }, Cmd.none )
+            let
+                -- Filter out non-numeric characters and limit to 3 digits
+                filteredCVV =
+                    cvv
+                        |> String.filter Char.isDigit
+                        |> String.left 3
+            in
+            ( { model | cvv = filteredCVV }, Cmd.none )
 
         StartPayment ->
             ( { model | paymentStatus = ConfirmingPayment }
@@ -152,13 +214,13 @@ view model =
                             ]
                         , div [ class "ml-3" ]
                             [ div [ class "text-lg font-bold" ] [ text "Payswitch Merchant" ]
-                            , div [ class "text-white text-[10px] p-1 w-fit rounded-md bg-blue-500 flex items-center" ]
+                            , div [ class "text-white text-[10px] font-[700] p-1 w-fit rounded-md bg-blue-500 flex items-center" ]
                                 [ img [ class "w-4 h-4 mr-1", src "./src/assets/check.svg", alt "Check Icon" ] []
                                 , text "Verified by PaySwitch"
                                 ]
                             ]
                         ]
-                    , button [ onClick (ToggleForm "close"), class "text-red-600 text-sm font-[500]" ] [ text "Close" ]
+                    , button [ onClick (ToggleForm "close"), class "text-[#EB1717] text-sm font-[700]" ] [ text "Close" ]
                     ]
                 ]
             , -- Payment Sections
@@ -196,6 +258,7 @@ view model =
                                                    )
                                             )
                                         ]
+                                        
                                         [ img
                                             [ src
                                                 (if model.activeForm == "mobile-form" then
@@ -239,7 +302,7 @@ view model =
                                     ]
                                 ]
                             ]
-                        , div [ class "text-center text-xs px-4 text-gray-600 py-4" ]
+                        , div [ class "text-center text-xs px-4 text-[##1E1E1E] font-[600] py-4" ]
                             [ text "Complete your purchase by providing your payment details." ]
 
                         -- Mobile Form
@@ -278,6 +341,7 @@ view model =
                                                 , text "Zeepay"
                                                 ]
                                             ]
+
                                       else
                                         text ""
                                     ]
@@ -290,6 +354,7 @@ view model =
                                             , placeholder "E.g 021 123 3456"
                                             , class "w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none"
                                             , onInput UpdatePhone
+                                            , value model.phone
                                             ]
                                             []
                                         ]
@@ -310,6 +375,7 @@ view model =
                                         , placeholder "E.g John Doe"
                                         , class "w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none"
                                         , onInput UpdateCardName
+                                        , value model.cardName
                                         ]
                                         []
                                     ]
@@ -321,6 +387,7 @@ view model =
                                         , placeholder "0000 0000 0000 0000"
                                         , class "w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none"
                                         , onInput UpdateCardNumber
+                                        , value model.cardNumber
                                         ]
                                         []
                                     ]
@@ -333,6 +400,7 @@ view model =
                                             , placeholder "mm/yy"
                                             , class "w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none"
                                             , onInput UpdateExpiry
+                                            , value model.expiry
                                             ]
                                             []
                                         ]
@@ -344,6 +412,7 @@ view model =
                                             , placeholder "000"
                                             , class "w-full p-2 border border-[#EBECF2] rounded-md focus:ring-2 text-sm focus:ring-blue-500 focus:outline-none"
                                             , onInput UpdateCVV
+                                            , value model.cvv
                                             ]
                                             []
                                         ]
@@ -357,8 +426,35 @@ view model =
                         , div [ class "p-4" ]
                             [ button
                                 [ type_ "submit"
-                                , class "w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700"
-                                , onClick (if model.activeForm == "mobile-form" then StartPayment else PaymentConfirmed)
+                                , class
+                                    ("w-full h-11 py-2 text-white font-[600] text-sm rounded-md"
+                                        ++ (if
+                                                if model.activeForm == "mobile-form" then
+                                                    model.selectedNetwork == "-- Select a mobile network --" || model.phone == "" || String.length model.phone < 10
+
+                                                else
+                                                    model.cvv == "" || String.length model.cvv < 3 || String.length model.expiry < 5 || String.length model.cardNumber < 16 || model.cardName == "" || model.cardNumber == "" || model.expiry == ""
+                                            then
+                                                " bg-gray-400"
+
+                                            else
+                                                " bg-[#2D61E3] hover:bg-blue-700"
+                                           )
+                                    )
+                                , onClick
+                                    (if model.activeForm == "mobile-form" then
+                                        StartPayment
+
+                                     else
+                                        PaymentConfirmed
+                                    )
+                                , disabled
+                                    (if model.activeForm == "mobile-form" then
+                                        model.selectedNetwork == "-- Select a mobile network --" || model.phone == ""
+
+                                     else
+                                        model.cvv == "" || model.cardName == "" || model.cardNumber == "" || model.expiry == ""
+                                    )
                                 ]
                                 [ text "Pay Amount" ]
                             ]
@@ -367,9 +463,9 @@ view model =
 
             -- Footer
             , div [ class "flex flex-col" ]
-                [ div [ class "flex items-center justify-center w-full gap-2 text-xs" ]
+                [ div [ class "flex items-center justify-center w-full gap-2 text-xs text-[#1E1E1E] font-[600]" ]
                     (if model.paymentStatus == NotStarted then
-                        [ text "Supported Wallets:"
+                        [ text "Supported Wallets:" 
                         , if model.activeForm == "card-form" then
                             div [ class "flex gap-1" ]
                                 [ img [ src "./src/assets/mastercard.svg", alt "Wallet 1" ] []
@@ -389,7 +485,7 @@ view model =
                      else
                         []
                     )
-                , div [ class "text-[10px] text-[#222357] flex gap-1 justify-center items-center mb-4 mt-2" ]
+                , div [ class "text-[11px] text-[#222357] font-[600] flex gap-1 justify-center items-center mb-4 mt-2" ]
                     [ img [ src "./src/assets/lock.svg", alt "Wallet 5" ] []
                     , text "Secured by theTeller"
                     ]
@@ -512,21 +608,22 @@ transactionTimeoutView =
                     ]
                     [ text "Try again" ]
                 ]
-            ,div [ class "w-full flex flex-col gap-3" ]
-    [ button
-        [ onClick StartPayment
-        -- , onClick (ToggleForm "mobile-form")
-        , class "w-full h-11 py-2 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200"
-        ]
-        [ text "Use a different number" ]
-    , button
-        [ onClick StartPayment
-        -- , onClick (ToggleForm "card-form")
-        , class "w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200"
-        ]
-        [ text "Use card instead" ]
-    ]
+            , div [ class "w-full flex flex-col gap-3" ]
+                [ button
+                    [ onClick StartPayment
 
+                    -- , onClick (ToggleForm "mobile-form")
+                    , class "w-full h-11 py-2 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200"
+                    ]
+                    [ text "Use a different number" ]
+                , button
+                    [ onClick StartPayment
+
+                    -- , onClick (ToggleForm "card-form")
+                    , class "w-full h-11 py-2 mb-5 bg-white text-gray-700 font-[600] text-sm rounded-md border border-gray-200"
+                    ]
+                    [ text "Use card instead" ]
+                ]
             ]
         ]
 

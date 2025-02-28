@@ -17,6 +17,7 @@
     "vite-plugin-elm": "^3.0.1"
   },
   "dependencies": {
-    "@tailwindcss/cli": "^4.0.7"
+    "@tailwindcss/cli": "^4.0.7",
+    "react-hot-toast": "^2.5.2"
   }
 }
