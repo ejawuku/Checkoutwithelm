@@ -171,7 +171,7 @@ update msg model =
 
         StartPayment ->
             ( { model | paymentStatus = ConfirmingPayment }
-            , Process.sleep (2 * 60 * 1000) |> Task.perform (\_ -> ShowPromptSection)
+            , Process.sleep (1 * 60 * 1000) |> Task.perform (\_ -> ShowPromptSection)
             )
 
         PaymentConfirmed ->
@@ -572,9 +572,11 @@ pleaseWaitView =
             [ div [ class "w-full" ]
                 [ button
                     [ disabled True
-                    , class "w-full h-11 py-2 bg-[#616478] text-white font-[600] text-sm rounded-md"
+                    , class "w-full h-11 py-2 bg-[#616478] text-white font-[600] text-sm rounded-md flex gap-1 items-center justify-center"
                     ]
-                    [ text "Confirming Payment" ]
+                    [ img [ src "./src/assets/confirmpayment.gif", alt "Loading", class "h-7" ] []
+                    , text "Confirming Payment"
+                    ]
                 ]
             ]
         ]

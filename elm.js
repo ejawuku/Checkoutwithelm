@@ -5300,7 +5300,7 @@ var $author$project$Main$update = F2(
 						function (_v1) {
 							return $author$project$Main$ShowPromptSection;
 						},
-						$elm$core$Process$sleep((2 * 60) * 1000)));
+						$elm$core$Process$sleep((1 * 60) * 1000)));
 			case 'PaymentConfirmed':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -5782,10 +5782,19 @@ var $author$project$Main$pleaseWaitView = A2(
 							_List_fromArray(
 								[
 									$elm$html$Html$Attributes$disabled(true),
-									$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-[#616478] text-white font-[600] text-sm rounded-md')
+									$elm$html$Html$Attributes$class('w-full h-11 py-2 bg-[#616478] text-white font-[600] text-sm rounded-md flex gap-1 items-center justify-center')
 								]),
 							_List_fromArray(
 								[
+									A2(
+									$elm$html$Html$img,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$src('./src/assets/confirmpayment.gif'),
+											$elm$html$Html$Attributes$alt('Loading'),
+											$elm$html$Html$Attributes$class('h-7')
+										]),
+									_List_Nil),
 									$elm$html$Html$text('Confirming Payment')
 								]))
 						]))
