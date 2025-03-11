@@ -1,39 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      <style>
-        body {
-          font-family: 'Urbanist', sans-serif;
+  <!-- Google Fonts: Urbanist -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <link href="/src/css/styles.css" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: "Urbanist", sans-serif;
+    }
+  </style>
+
+  <title>Payment Card</title>
+</head>
+
+<body>
+  <!-- Mount the Elm app here -->
+  <div id="elm-app"></div>
+
+  <!-- Load the compiled Elm app -->
+  <script src="elm.js"></script>
+  <script>
+    // Initialize the Elm app
+    var app = Elm.Main.init({
+      node: document.getElementById("elm-app"),
+      flags: {
+        apiKey: "MERCHANT_API_KEY",
+        transid: "",
+        amount: 500.0, 
+        customer_email: "",
+        currency: "GHS",
+        redirect_url:"",
+        pay_button_text: "",
+        custom_description:"",
+        payment_method:"",
+      },
+    });
+
+    console.log("Elm app initialized:", app); // Debugging: Check if Elm app is initialized
+
+    // Check if the ports are defined
+    if (app.ports && app.ports.sendMessage && app.ports.receiveMessage) {
+      console.log("Elm ports are available."); // Debugging: Confirm ports are defined
+
+      // Handle messages from Elm (e.g., payment initiation)
+      app.ports.sendMessage.subscribe(function (message) {
+        console.log("Received from Elm:", message);
+
+        if (message.type === "mobile-payment") {
+          // Call mobile money payment API
+          processMobilePayment(message.network, message.phone, message.amount);
+        } else if (message.type === "card-payment") {
+          // Call card payment API
+          processCardPayment(
+            message.cardNumber,
+            message.expiry,
+            message.cvv,
+            message.amount
+          );
         }
-      </style>
-
-    <!-- Tailwind CSS -->
-    <link href="/src/css/styles.css" rel="stylesheet" />
-
-    <title>Payment Card</title>
-  </head>
-
-  <body>
-    <!-- Mount the Elm app here -->
-    <div id="elm-app"></div>
-
-    
-
-    <!-- Load the compiled Elm app -->
-    <script src="elm.js"></script>
-    <script>
-      // Initialize the Elm app
-      var app = Elm.Main.init({
-        node: document.getElementById("elm-app"),
       });
-    </script>
-  </body>
+
+      // Function to process mobile money payments
+      function processMobilePayment(network, phone, amount) {
+        console.log("Processing mobile payment...");
+        console.log("Network:", network);
+        console.log("Phone:", phone);
+        console.log("Amount:", amount);
+
+        // Simulate API call (replace with actual payment gateway integration)
+        setTimeout(function () {
+          // Send payment status back to Elm
+          app.ports.receiveMessage.send("PaymentConfirmed"); // or "PaymentFailed"
+        }, 2000);
+      }
+
+      // Function to process card payments
+      function processCardPayment(cardNumber, expiry, cvv, amount) {
+        console.log("Processing card payment...");
+        console.log("Card Number:", cardNumber);
+        console.log("Expiry:", expiry);
+        console.log("CVV:", cvv);
+        console.log("Amount:", amount);
+
+        // Simulate API call (replace with actual payment gateway integration)
+        setTimeout(function () {
+          // Send payment status back to Elm
+          app.ports.receiveMessage.send("PaymentConfirmed"); // or "PaymentFailed"
+        }, 2000);
+      }
+    } else {
+      console.error("Elm ports are not defined. Check your Elm code.");
+    }
+  </script>
+</body>
+
 </html>

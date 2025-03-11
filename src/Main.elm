@@ -51,6 +51,15 @@ type alias Model =
     , expiry : String
     , cvv : String
     , paymentStatus : PaymentStatus
+    , apiKey: String
+    , transid: String
+    , amount: Float
+    , customer_email: String
+    , currency: String
+    , redirect_url: String
+    , pay_button_text: String
+    , custom_description: String
+    , payment_method: String
     }
 
 
@@ -63,8 +72,8 @@ type PaymentStatus
     | PaymentTimedOut
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
+init : { apiKey : String, transid : String , amount : Float, customer_email : String , currency : String , redirect_url : String, pay_button_text : String , custom_description : String, payment_method : String  } -> ( Model, Cmd Msg )
+init flags =
     ( { isDropdownOpen = False
       , selectedNetwork = "-- Select a mobile network --"
       , selectedIcon = ""
@@ -75,9 +84,19 @@ init _ =
       , expiry = ""
       , cvv = ""
       , paymentStatus = NotStarted
+      , apiKey = flags.apiKey
+      , transid = flags.transid
+      , amount = flags.amount
+      , customer_email = flags.customer_email
+      , currency = flags.currency
+      , redirect_url = flags.redirect_url
+      , pay_button_text = flags.pay_button_text
+      , custom_description = flags.custom_description
+      , payment_method = flags.payment_method
       }
     , Cmd.none
     )
+
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -171,12 +190,18 @@ update msg model =
 
         StartPayment ->
             ( { model | paymentStatus = ConfirmingPayment }
-            , Process.sleep (1 * 60 * 1000) |> Task.perform (\_ -> ShowPromptSection)
+            , Cmd.batch
+                [ Process.sleep (1 * 60 * 1000) |> Task.perform (\_ -> ShowPromptSection)
+                , sendMessage "Starting payment process..." 
+                ]
             )
 
         PaymentConfirmed ->
             ( { model | paymentStatus = PleaseWait }
-            , Process.sleep 5000 |> Task.perform (\_ -> ShowSuccessSection)
+            , Cmd.batch
+                [ Process.sleep 5000 |> Task.perform (\_ -> ShowSuccessSection)
+                , sendMessage "Payment confirmed!" 
+                ]
             )
 
         PaymentFailed ->
@@ -225,7 +250,7 @@ view model =
                 ]
             , -- Payment Sections
               if model.paymentStatus == ConfirmingPayment then
-                confirmingPaymentView
+                confirmingPaymentView model
 
               else if model.paymentStatus == WaitingForPrompt then
                 didntGetPromptView
@@ -456,7 +481,7 @@ view model =
                                         model.cvv == "" || model.cardName == "" || model.cardNumber == "" || model.expiry == ""
                                     )
                                 ]
-                                [ text "Pay Amount" ]
+                                [ text ("Pay " ++ model.currency ++ String.fromFloat model.amount) ]
                             ]
                         ]
                     ]
@@ -494,15 +519,15 @@ view model =
         ]
 
 
-confirmingPaymentView : Html Msg
-confirmingPaymentView =
+confirmingPaymentView : Model -> Html Msg
+confirmingPaymentView model =
     div [ class "flex flex-col pt-5 gap-5 items-center justify-center w-full" ]
         [ img [ src "./src/assets/contactless-payment.gif", alt "Wallet 1", class "w-20 h-20" ] []
         , div [ class "flex flex-col gap-2 items-center justify-center text-md font-[700]" ]
             [ text "Complete on Mobile"
             , div [ class "text-sm font-[600] text-center" ]
                 [ div [] [ text "Enter your mobile PIN to complete" ]
-                , div [] [ text "your payment of GHS20.00" ]
+                , div [] [ text ("your payment of " ++ model.currency ++ String.fromFloat model.amount) ]
                 ]
             ]
         , div [ class "flex flex-col gap-3 items-center justify-center w-full px-4" ]
@@ -511,7 +536,12 @@ confirmingPaymentView =
                     [ onClick PaymentConfirmed
                     , class "w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700"
                     ]
-                    [ text "Pay Amount" ]
+                   [ text (if model.pay_button_text == "" then 
+            "Pay " ++ model.currency ++ " " ++ String.fromFloat model.amount
+         else 
+            model.pay_button_text ++ " " ++ model.currency ++ " " ++ String.fromFloat model.amount ) 
+]
+
                 ]
             , div [ class "w-full" ]
                 [ button
@@ -630,7 +660,18 @@ transactionTimeoutView =
         ]
 
 
-main : Program () Model Msg
+main : Program 
+    { apiKey : String
+    , transid : String
+    , amount : Float
+    , customer_email : String
+    , currency : String
+    , redirect_url : String
+    , pay_button_text : String
+    , custom_description : String
+    , payment_method : String
+    } 
+    Model Msg
 main =
     Browser.element
         { init = init
@@ -638,3 +679,4 @@ main =
         , subscriptions = subscriptions
         , view = view
         }
+
