@@ -51,15 +51,15 @@ type alias Model =
     , expiry : String
     , cvv : String
     , paymentStatus : PaymentStatus
-    , apiKey: String
-    , transid: String
-    , amount: Float
-    , customer_email: String
-    , currency: String
-    , redirect_url: String
-    , pay_button_text: String
-    , custom_description: String
-    , payment_method: String
+    , apiKey : String
+    , transid : String
+    , amount : Float
+    , customer_email : String
+    , currency : String
+    , redirect_url : String
+    , pay_button_text : String
+    , custom_description : String
+    , payment_method : String
     }
 
 
@@ -72,12 +72,12 @@ type PaymentStatus
     | PaymentTimedOut
 
 
-init : { apiKey : String, transid : String , amount : Float, customer_email : String , currency : String , redirect_url : String, pay_button_text : String , custom_description : String, payment_method : String  } -> ( Model, Cmd Msg )
+init : { apiKey : String, transid : String, amount : Float, customer_email : String, currency : String, redirect_url : String, pay_button_text : String, custom_description : String, payment_method : String } -> ( Model, Cmd Msg )
 init flags =
     ( { isDropdownOpen = False
       , selectedNetwork = "-- Select a mobile network --"
       , selectedIcon = ""
-      , activeForm = "mobile-form"
+      , activeForm = if flags.payment_method == "" then "mobile-form" else if flags.payment_method == "card" then "card-form" else "mobile-form"
       , phone = ""
       , cardName = ""
       , cardNumber = ""
@@ -96,7 +96,6 @@ init flags =
       }
     , Cmd.none
     )
-
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -192,7 +191,7 @@ update msg model =
             ( { model | paymentStatus = ConfirmingPayment }
             , Cmd.batch
                 [ Process.sleep (1 * 60 * 1000) |> Task.perform (\_ -> ShowPromptSection)
-                , sendMessage "Starting payment process..." 
+                , sendMessage "Starting payment process..."
                 ]
             )
 
@@ -200,7 +199,7 @@ update msg model =
             ( { model | paymentStatus = PleaseWait }
             , Cmd.batch
                 [ Process.sleep 5000 |> Task.perform (\_ -> ShowSuccessSection)
-                , sendMessage "Payment confirmed!" 
+                , sendMessage "Payment confirmed!"
                 ]
             )
 
@@ -270,7 +269,7 @@ view model =
                         [ -- Segmented Control
                           div [ class "flex flex-col items-center justify-between" ]
                             [ div [ class "px-4 flex justify-between items-center w-full" ]
-                                [ div [ class "inline-flex h-9 w-full items-baseline justify-start rounded-lg bg-gray-100 p-1" ]
+                                [ div [ class (if model.payment_method == "both" then "inline-flex h-9 w-full items-baseline justify-start rounded-lg bg-gray-100 p-1" else "hidden") ]
                                     [ button
                                         [ onClick (ToggleForm "mobile-form")
                                         , class
@@ -283,7 +282,6 @@ view model =
                                                    )
                                             )
                                         ]
-                                        
                                         [ img
                                             [ src
                                                 (if model.activeForm == "mobile-form" then
@@ -328,7 +326,14 @@ view model =
                                 ]
                             ]
                         , div [ class "text-center text-xs px-4 text-[##1E1E1E] font-[600] py-4" ]
-                            [ text "Complete your purchase by providing your payment details." ]
+                            [ text
+                                (if model.custom_description == "" then
+                                    "Complete your purchase by providing your payment details."
+
+                                 else
+                                    model.custom_description
+                                )
+                            ]
 
                         -- Mobile Form
                         , if model.activeForm == "mobile-form" then
@@ -481,7 +486,14 @@ view model =
                                         model.cvv == "" || model.cardName == "" || model.cardNumber == "" || model.expiry == ""
                                     )
                                 ]
-                                [ text ("Pay " ++ model.currency ++ String.fromFloat model.amount) ]
+                                [ text
+                                    (if model.pay_button_text == "" then
+                                        "Pay " ++ model.currency ++ " " ++ String.fromFloat model.amount
+
+                                     else
+                                        model.pay_button_text ++ " " ++ model.currency ++ " " ++ String.fromFloat model.amount
+                                    )
+                                ]
                             ]
                         ]
                     ]
@@ -490,7 +502,7 @@ view model =
             , div [ class "flex flex-col" ]
                 [ div [ class "flex items-center justify-center w-full gap-2 text-xs text-[#1E1E1E] font-[600]" ]
                     (if model.paymentStatus == NotStarted then
-                        [ text "Supported Wallets:" 
+                        [ text "Supported Wallets:"
                         , if model.activeForm == "card-form" then
                             div [ class "flex gap-1" ]
                                 [ img [ src "./src/assets/mastercard.svg", alt "Wallet 1" ] []
@@ -536,12 +548,11 @@ confirmingPaymentView model =
                     [ onClick PaymentConfirmed
                     , class "w-full h-11 py-2 bg-blue-600 text-white font-[600] text-sm rounded-md hover:bg-blue-700"
                     ]
-                   [ text (if model.pay_button_text == "" then 
-            "Pay " ++ model.currency ++ " " ++ String.fromFloat model.amount
-         else 
-            model.pay_button_text ++ " " ++ model.currency ++ " " ++ String.fromFloat model.amount ) 
-]
-
+                    [ text
+                   
+                            "Confirm Payment" 
+                        
+                    ]
                 ]
             , div [ class "w-full" ]
                 [ button
@@ -640,6 +651,10 @@ transactionTimeoutView =
                     ]
                     [ text "Try again" ]
                 ]
+            , div [ class "w-full text-gray-400 justify-center items-center" ]
+                [ 
+                     text "Or" 
+                ]    
             , div [ class "w-full flex flex-col gap-3" ]
                 [ button
                     [ onClick StartPayment
@@ -660,18 +675,20 @@ transactionTimeoutView =
         ]
 
 
-main : Program 
-    { apiKey : String
-    , transid : String
-    , amount : Float
-    , customer_email : String
-    , currency : String
-    , redirect_url : String
-    , pay_button_text : String
-    , custom_description : String
-    , payment_method : String
-    } 
-    Model Msg
+main :
+    Program
+        { apiKey : String
+        , transid : String
+        , amount : Float
+        , customer_email : String
+        , currency : String
+        , redirect_url : String
+        , pay_button_text : String
+        , custom_description : String
+        , payment_method : String
+        }
+        Model
+        Msg
 main =
     Browser.element
         { init = init
@@ -679,4 +696,3 @@ main =
         , subscriptions = subscriptions
         , view = view
         }
-
