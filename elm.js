@@ -5918,7 +5918,7 @@ var $author$project$Main$transactionTimeoutView = A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('w-full text-gray-300 justify-center items-center')
+							$elm$html$Html$Attributes$class('w-full text-gray-400 justify-center items-center')
 						]),
 					_List_fromArray(
 						[
